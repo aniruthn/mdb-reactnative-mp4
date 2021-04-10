@@ -12,3 +12,8 @@ _Objective_: An application that takes locations of where users are going and wh
 * Use geoFirestore npm library to handle location data
 * Use Google Cloud Functions and Expo Notifications to handle pushing the notifications
 * Each user will have a push notification token
+
+## Screens:
+### Main
+* Main screen that has a place to put inputs (hardcoded at first)
+    * To be replaced with a MapView component and interactive capabilities to select a location with automatic retrieval of current location
