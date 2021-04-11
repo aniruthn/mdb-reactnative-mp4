@@ -77,3 +77,4 @@ function RootNavigator() {
     </Stack.Navigator>
   );
 }
+
