@@ -7,6 +7,7 @@ import { Text, View } from "../../../components/Themed";
 export default function MainScreen() {
   Notifications.addNotificationResponseReceivedListener((notification) => {
     console.log(notification);
+    console.log("push verify");
     console.log("Notification recieved");
     const chatId = notification.notification.request.content.data.name as String;
     console.log(chatId);
