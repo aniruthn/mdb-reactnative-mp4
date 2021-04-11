@@ -1,4 +1,4 @@
-# MP4: LocPair
+# MP4: Pear-L
 
 _Objective_: An application that takes locations of where users are going and where they are leaving from to pair them up accordingly.
 
