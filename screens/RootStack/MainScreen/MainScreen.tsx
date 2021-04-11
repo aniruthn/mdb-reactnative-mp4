@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {Button} from "react-native";
+import { Button, Platform } from "react-native";
 import Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import { MainStyles } from "./MainScreenStyles";
@@ -16,20 +16,19 @@ Notifications.setNotificationHandler({
 export default function MainScreen() {
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
+  const notificationListener = useRef(Notifications.addNotificationReceivedListener(notification => setNotification(notification as unknown as boolean)));
+  const responseListener = useRef(Notifications.addNotificationResponseReceivedListener(response => {
+    console.log(response);
+  }));
 
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token as string));
 
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => setNotification(notification as boolean));
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
-    });
-
     return () => {
+      // couldn't figure out how to convert from mutable subscription into just subscription objects
+      // @ts-ignore
       Notifications.removeNotificationSubscription(notificationListener);
+      // @ts-ignore
       Notifications.removeNotificationSubscription(responseListener);
     };
   }, []);
