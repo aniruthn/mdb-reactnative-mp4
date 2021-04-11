@@ -26,7 +26,7 @@ export default function MainScreen() {
     Notifications.addNotificationReceivedListener(notification => setNotification(notification as unknown as boolean));
     Notifications.addNotificationResponseReceivedListener(response => {
       console.log("response information from notif: ");
-      console.log(response);
+      console.log(response); 
     });
 
     return () => {
@@ -65,7 +65,7 @@ async function schedulePushNotification() {
     content: {
       title: "You've got mail! 📬",
       body: 'Here is the notification body',
-      data: { data: 'goes here' },
+      data: { data: 'monkey' },
     },
     trigger: { seconds: 2 },
   });

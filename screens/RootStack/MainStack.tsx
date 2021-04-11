@@ -8,7 +8,7 @@ import useColorScheme from "../../hooks/useColorScheme";
 import MainScreen from "./MainScreen/MainScreen";
 import AccountScreen from "./AccountScreen/AccountScreen";
 import { BottomTabParamList, MainParamList, AccountParamList } from "../../types";
-
+import { Expo } from 'expo-server-sdk';
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
 export default function MainStackNavigator() {
@@ -87,3 +87,4 @@ function AccountNavigator() {
     </TabTwoStack.Navigator>
   );
 }
+

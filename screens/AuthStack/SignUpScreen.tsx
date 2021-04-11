@@ -24,23 +24,32 @@ export default function SignUpScreen({ navigation }: Props) {
   };
 
   const createAccount = async () => {
-    await firebase.auth().createUserWithEmailAndPassword(email, password);
-    //token needs to be generated in main stack after asking for permissions
     const token = (await Notifications.getExpoPushTokenAsync()).data;
-    let userObject = {
-      name: name,
-      email: email,
-      notificationToken: token,
-      settings: {
-        locationTrackingOn: true,
-        pushNotificationsOn: true,
-      }
-    };
-    return await firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser?.uid)
-      .set(userObject).catch((error) => showError(error));
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          // Signed in 
+          var user = userCredential.user;
+          //console.log(user);
+          
+          firebase.firestore().collection("users").doc(user?.uid).set({
+            name: name,
+            email: email,
+            notificationToken: token,
+            settings: {
+              locationTrackingOn: true,
+              pushNotificationsOn: true,
+            }
+          })
+          .catch((error) => {
+              console.error("Error adding document: ", error);
+          });
+        })
+        .catch((error) => {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log("Error code: " + errorCode + "Error message: " + errorMessage);
+        });
+   
   }
 
   return (
