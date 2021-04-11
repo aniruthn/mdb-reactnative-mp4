@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Platform } from "react-native";
-import Notifications from "expo-notifications";
+import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import { MainStyles } from "./MainScreenStyles";
 import { Text, View } from "../../../components/Themed";
@@ -16,35 +16,45 @@ Notifications.setNotificationHandler({
 export default function MainScreen() {
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
-  const notificationListener = useRef(Notifications.addNotificationReceivedListener(notification => setNotification(notification as unknown as boolean)));
-  const responseListener = useRef(Notifications.addNotificationResponseReceivedListener(response => {
-    console.log(response);
-  }));
+  //both of these are unused now that the return section is commented out but still seems to work?
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token as string));
 
+    Notifications.addNotificationReceivedListener(notification => setNotification(notification as unknown as boolean));
+    Notifications.addNotificationResponseReceivedListener(response => {
+      console.log("response information from notif: ");
+      console.log(response);
+    });
+
     return () => {
+      // Commenting out this section prevents the following error:
+      // Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function.
+      
       // couldn't figure out how to convert from mutable subscription into just subscription objects
       // @ts-ignore
-      Notifications.removeNotificationSubscription(notificationListener);
+      // Notifications.removeNotificationSubscription(notificationListener);
       // @ts-ignore
-      Notifications.removeNotificationSubscription(responseListener);
+      // Notifications.removeNotificationSubscription(responseListener);
     };
   }, []);
   return (
     <View style={MainStyles.container}>
       <Text style={MainStyles.title}>Main Screen</Text>
-      <Button
-        title="Press to schedule a notification"
-        onPress={async () => {
-          await schedulePushNotification();
-        }}
-      />
       <View
         style={MainStyles.separator}
         lightColor="#eee"
         darkColor="rgba(255,255,255,0.1)"
+      />
+      <Button
+        title="Press to schedule a notification"
+        onPress={async () => {
+          // needs to be replaced with a call to the backend to add the locations and create a request to find another user with the same
+          // upon that request being made, then a notification to both users + resolved of the requests to be made
+          await schedulePushNotification();
+        }}
       />
     </View>
   );
@@ -75,7 +85,8 @@ async function registerForPushNotificationsAsync() {
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
+    //maybe add the token here to firestore for the user instead of in the sign up screen?
+    console.log("registered async push token: " + token);
   } else {
     alert('Must use physical device for Push Notifications');
   }

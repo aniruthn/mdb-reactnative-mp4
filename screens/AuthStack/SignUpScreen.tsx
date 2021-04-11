@@ -36,12 +36,11 @@ export default function SignUpScreen({ navigation }: Props) {
         pushNotificationsOn: true,
       }
     };
-  
     return await firebase
       .firestore()
       .collection("users")
       .doc(firebase.auth().currentUser?.uid)
-      .set(userObject);
+      .set(userObject).catch((error) => showError(error));
   }
 
   return (
