@@ -1,18 +1,24 @@
 // const User = require('../models/User');
-import { Expo } from 'expo-server-sdk';
-import firebase from "firebase";
+// import { Expo } from 'expo-server-sdk';
+// import firebase from "firebase";
 
-// const firebaseConfig = require("..keys.json");
+const expoServer = require('expo-server-sdk');
+const Expo = expoServer.Expo;
+const firebase = require('firebase');
 
-const firebaseConfig = {
-  "apiKey": "AIzaSyC5fKJ7KWtwMNyPbNPs7mzqFGfYhnYj3zk",
-  "authDomain": "pear-l.firebaseapp.com",
-  "projectId": "pear-l",
-  "storageBucket": "pear-l.appspot.com",
-  "messagingSenderId": "683106748596",
-  "appId": "1:683106748596:web:1d9a0879611e62814cefe1",
-  "measurementId": "G-8BQHXJLMMX"
-};
+const firebaseConfig = require("../keys.json");
+
+// const firebaseConfig = {
+//   "apiKey": "AIzaSyC5fKJ7KWtwMNyPbNPs7mzqFGfYhnYj3zk",
+//   "authDomain": "pear-l.firebaseapp.com",
+//   "projectId": "pear-l",
+//   "storageBucket": "pear-l.appspot.com",
+//   "messagingSenderId": "683106748596",
+//   "appId": "1:683106748596:web:1d9a0879611e62814cefe1",
+//   "measurementId": "G-8BQHXJLMMX"
+// };
+
+console.log(firebaseConfig);
 
 if (firebase.apps.length == 0) {
   firebase.initializeApp(firebaseConfig);
@@ -58,7 +64,7 @@ const expo = new Expo();
  * POST /notificaion
  * Send a push notification to a user
  */
- export const postNotification = (req, response) => {
+exports.postNotification = (req, response) => {
   // const uid = req.params.uid;
   // console.log(uid);
   // const location1 = req.params.location1;
@@ -80,8 +86,8 @@ const expo = new Expo();
     const message = {
         to: token,
         sound: 'default',
-        // title: req.body.title,
-        // body: req.body.message,
+        title: 'title',
+        body: 'notification message',
     };
     let chunks = expo.chunkPushNotifications([message]);
     if (doc.exists) {

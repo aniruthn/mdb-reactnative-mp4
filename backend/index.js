@@ -4,7 +4,8 @@
 /**
  * Module dependencies.
  */
- import express from 'express';
+//  import express from 'express';
+const express = require("express");
 //  const compression = require('compression');
 //  const bodyParser = require('body-parser');
 //  const logger = require('morgan');
@@ -25,12 +26,15 @@
  /**
   * Controllers (route handlers).
   */
- import { postNotification } from './server.js';
+//  import { postNotification } from './server.js';
+ const serv = require('./server.js');
+ const postNotification = serv.postNotification;
  
  /**
   * Create Express server.
   */
  const app = express();
+ const router = express.Router();
  
  /**
   * Express configuration.
@@ -58,7 +62,14 @@
   * API examples routes.
   */
 //  app.post('/user', apiController.postUser);
- app.get('/p', postNotification);
+app.get('/', (req, resp) => {
+  console.log('contacted the server.');
+  resp.send({'some': 'json'});
+});
+
+ app.post('/sendPush', (req, resp) => {
+   postNotification(req, resp)
+  });
  
  /**
   * Error Handler.
@@ -69,8 +80,13 @@
   * Start Express server.
   */
  app.listen(app.get('port'), () => {
+  var os = require('os');
+  var networkInterfaces = os.networkInterfaces;
+  console.log(networkInterfaces());
    console.log('App is running at http://localhost:%s', app.get('port'));
    console.log('  Press CTRL-C to stop\n');
  });
  
- export default app;
+module.exports = router;
+
+//  export default app;

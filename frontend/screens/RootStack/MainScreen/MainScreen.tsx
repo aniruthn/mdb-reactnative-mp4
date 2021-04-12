@@ -51,7 +51,22 @@ export default function MainScreen() {
       <Button
         title="Press to schedule a notification"
         onPress={async () => {
-          await schedulePushNotification();
+          // the first part is the personal ip address, gets replaced by whatever
+          // the index.js prints ot as the local ip address instead
+          const ip: string = '';
+          fetch(ip + '/');
+          fetch(ip + '/sendPush', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: null
+          })
+          .then(() => console.log('no network error'))
+          .catch((error) => console.error(error));
+          // await schedulePushNotification();
+          console.log('next part');
         }}
       />
     </View>
