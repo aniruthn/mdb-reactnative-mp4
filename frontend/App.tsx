@@ -8,7 +8,7 @@ import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./screens/index";
 
-const firebaseConfig = require("./keys.json");
+const firebaseConfig = require("..keys.json");
 
 if (firebase.apps.length == 0) {
   firebase.initializeApp(firebaseConfig);

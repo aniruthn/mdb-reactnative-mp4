@@ -1,7 +1,25 @@
 // const User = require('../models/User');
-const Expo = require('expo-server-sdk');
-const firebase = require('firebase');
+import { Expo } from 'expo-server-sdk';
+import firebase from "firebase";
+
+// const firebaseConfig = require("..keys.json");
+
+const firebaseConfig = {
+  "apiKey": "AIzaSyC5fKJ7KWtwMNyPbNPs7mzqFGfYhnYj3zk",
+  "authDomain": "pear-l.firebaseapp.com",
+  "projectId": "pear-l",
+  "storageBucket": "pear-l.appspot.com",
+  "messagingSenderId": "683106748596",
+  "appId": "1:683106748596:web:1d9a0879611e62814cefe1",
+  "measurementId": "G-8BQHXJLMMX"
+};
+
+if (firebase.apps.length == 0) {
+  firebase.initializeApp(firebaseConfig);
+}
+
 const db = firebase.firestore();
+
 
 // Create a new Expo SDK client
 const expo = new Expo();
@@ -40,32 +58,70 @@ const expo = new Expo();
  * POST /notificaion
  * Send a push notification to a user
  */
-exports.postNotification = (req: { params: { uid: any; location1: any; location2: any;}; body: { title: any; message: any; }; }, res: { json: (arg0: { message: any; }) => void; }) => {
-  const uid: string = req.params.uid;
-  const location1: string = req.params.location1;
-  const location2: string = req.params.location2;
+ export const postNotification = (req, response) => {
+  // const uid = req.params.uid;
+  // console.log(uid);
+  // const location1 = req.params.location1;
+  // const location2 = req.params.location2;
+
+  // PLEASE READ: This is what I think is going wrong below
+  // The line where it's sending push notifications async is erroring, maybe because of type or something else
+  // I think we need to stick closer to this example https://github.com/expo/expo-server-sdk-node because everything
+  // else (firebase stuff) I managed to get work along with a few of the other errors
 
   var docRef = db.collection("users").doc("SIgrga1h7nffYouiKInEge98ql73");
-  docRef.get().then((doc: any) => {
+  docRef.get().then((doc) => {
     const token = doc.data().notificationToken;
-    if (!Expo.isExpoPushToken(token)) {
-        return console.error(`Push token ${token} is not a valid Expo push token`);
-      }
+    //token is right!!!!
+    console.log(token);
+    // if (!Expo.isExpoPushToken(token)) {
+    //     return console.error(`Push token ${token} is not a valid Expo push token`);
+    //   }
     const message = {
         to: token,
         sound: 'default',
-        title: req.body.title,
-        body: req.body.message,
+        // title: req.body.title,
+        // body: req.body.message,
     };
+    let chunks = expo.chunkPushNotifications([message]);
     if (doc.exists) {
-        const receipt = expo.sendPushNotificationAsync(message).then(() => {
+      //this is where it breaks somehow
+        const receipt = expo.sendPushNotificationsAsync(chunks).then(() => {
+            console.log(message);
             res.json({ message: receipt });
-        });
+        }).catch((error) => console.error(error));
     }
-  }).catch((error: any) => {
+  }).catch((error) => {
     console.error(error);
   }); 
 };
+
+// exports.postNotification = (req: { params: { uid: any; location1: any; location2: any;}; body: { title: any; message: any; }; }, res: { json: (arg0: any) => void }) => {
+//   const uid: string = req.params.uid;
+//   const location1: string = req.params.location1;
+//   const location2: string = req.params.location2;
+
+//   var docRef = db.collection("users").doc("SIgrga1h7nffYouiKInEge98ql73");
+//   docRef.get().then((doc: any) => {
+//     const token = doc.data().notificationToken;
+//     if (!Expo.isExpoPushToken(token)) {
+//         return console.error(`Push token ${token} is not a valid Expo push token`);
+//       }
+//     const message = {
+//         to: token,
+//         sound: 'default',
+//         title: req.body.title,
+//         body: req.body.message,
+//     };
+//     if (doc.exists) {
+//         const receipt = expo.sendPushNotificationsAsync(message).then(() => {
+//             res.json({ message: receipt });
+//         });
+//     }
+//   }).catch((error: any) => {
+//     console.error(error);
+//   }); 
+// };
 
 /*
 // Create a new Expo SDK client

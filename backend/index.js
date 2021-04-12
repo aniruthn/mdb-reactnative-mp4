@@ -1,7 +1,10 @@
+//to run: use node index.js
+
+
 /**
  * Module dependencies.
  */
- const express = require('express');
+ import express from 'express';
 //  const compression = require('compression');
 //  const bodyParser = require('body-parser');
 //  const logger = require('morgan');
@@ -22,7 +25,7 @@
  /**
   * Controllers (route handlers).
   */
- const apiController = require('./server.ts');
+ import { postNotification } from './server.js';
  
  /**
   * Create Express server.
@@ -55,7 +58,7 @@
   * API examples routes.
   */
 //  app.post('/user', apiController.postUser);
- app.post('/api/notification/:uid:location1:location2', apiController.postNotification);
+ app.get('/p', postNotification);
  
  /**
   * Error Handler.
@@ -66,8 +69,8 @@
   * Start Express server.
   */
  app.listen(app.get('port'), () => {
-   console.log('%s App is running at http://localhost:%d in %s mode', app.get('port'), app.get('env'));
+   console.log('App is running at http://localhost:%s', app.get('port'));
    console.log('  Press CTRL-C to stop\n');
  });
  
- module.exports = app;
+ export default app;
