@@ -41,6 +41,7 @@ const express = require("express");
   */
  app.set('host', '0.0.0.0');
  app.set('port', 8080);
+ app.use(express.json());
 //  app.set('views', path.join(__dirname, 'views'));
 //  app.set('view engine', 'pug');
 //  app.use(cors());
@@ -61,7 +62,6 @@ const express = require("express");
  /**
   * API examples routes.
   */
-//  app.post('/user', apiController.postUser);
 app.get('/', (req, resp) => {
   console.log('contacted the server.');
   resp.send({'some': 'json'});

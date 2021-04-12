@@ -89,12 +89,13 @@ exports.postNotification = (req, response) => {
         title: 'title',
         body: 'notification message',
     };
-    let chunks = expo.chunkPushNotifications([message]);
+    // let chunks = expo.chunkPushNotifications([message]);
+    let chunks = [message];
     if (doc.exists) {
       //this is where it breaks somehow
         const receipt = expo.sendPushNotificationsAsync(chunks).then(() => {
             console.log(message);
-            res.json({ message: receipt });
+            response.json({ message: receipt });
         }).catch((error) => console.error(error));
     }
   }).catch((error) => {

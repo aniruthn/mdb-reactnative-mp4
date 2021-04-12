@@ -53,9 +53,18 @@ export default function MainScreen() {
         onPress={async () => {
           // the first part is the personal ip address, gets replaced by whatever
           // the index.js prints ot as the local ip address instead
-          const ip: string = '';
-          fetch(ip + '/');
-          fetch(ip + '/sendPush', {
+          const ip: string = '192.168.254.19';
+          // fetch('http://' + ip + ':8080/sendPush', {
+          //   method: 'POST',
+          //   headers: {
+          //     'Accept': 'application/json',
+          //     'Content-Type': 'application/json'
+          //   },
+          //   body: null
+          // })
+          // fetch('http://' + ip + ':8080/')
+          // fetch('https://jsonplaceholder.typicode.com/todos/1')
+          fetch('http://' + 'localhost' + ':8080/sendPush', {
             method: 'POST',
             headers: {
               'Accept': 'application/json',
@@ -63,6 +72,8 @@ export default function MainScreen() {
             },
             body: null
           })
+          .then(response => response.json())
+          .then(json => console.log(json))
           .then(() => console.log('no network error'))
           .catch((error) => console.error(error));
           // await schedulePushNotification();
