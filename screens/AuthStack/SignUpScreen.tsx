@@ -40,7 +40,7 @@ export default function SignUpScreen({ navigation }: Props) {
       .firestore()
       .collection("users")
       .doc(firebase.auth().currentUser?.uid)
-      .set(userObject).catch((error) => showError(error));
+      .set(userObject).catch((error: any) => showError(error));
   }
 
 

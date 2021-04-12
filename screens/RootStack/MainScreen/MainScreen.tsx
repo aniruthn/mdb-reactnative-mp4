@@ -51,44 +51,6 @@ export default function MainScreen() {
       <Button
         title="Press to schedule a notification"
         onPress={async () => {
-          // needs to be replaced with a call to the backend to add the locations and create a request to find another user with the same
-          // upon that request being made, then a notification to both users + resolved of the requests to be made
-          let expo = new Expo({ accessToken: process.env.EXPO_ACCESS_TOKEN });
-          let messages = {} as ExpoPushMessage[];
-          // replace [] with the tokens read by the backend from firestore
-          for (let pushToken of []) {
-            if (!Expo.isExpoPushToken(pushToken)) {
-              console.error(`Push token ${pushToken} is not a valid Expo push token`);
-              continue;
-            }
-            messages.push({
-              to: pushToken,
-              sound: 'default',
-              body: 'This is a test notification',
-              data: { withSome: 'data' },
-            })
-          }
-
-          let chunks = expo.chunkPushNotifications(messages);
-          let tickets = [];
-          (async () => {
-            // Send the chunks to the Expo push notification service. There are
-            // different strategies you could use. A simple one is to send one chunk at a
-            // time, which nicely spreads the load out over time:
-            for (let chunk of chunks) {
-              try {
-                let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-                console.log(ticketChunk);
-                tickets.push(...ticketChunk);
-                // NOTE: If a ticket contains an error code in ticket.details.error, you
-                // must handle it appropriately. The error codes are listed in the Expo
-                // documentation:
-                // https://docs.expo.io/push-notifications/sending-notifications/#individual-errors
-              } catch (error) {
-                console.error(error);
-              }
-          }
-          })();
           await schedulePushNotification();
         }}
       />
