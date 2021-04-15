@@ -64,24 +64,30 @@ export default function MainScreen() {
           geocollection.doc(userId).set({
             requested: true,
           }, {merge: true});
-          // when adding parameters just use a slash to denote separations between each parameter
-          fetch('http://' + ip + ':8080/sendPush/' + firebase.auth().currentUser?.uid + '/0/1')
-          // console.log('http://' + ip + ':8080/');
-          // fetch('http://' + ip + ':8080/')
-          // fetch('https://jsonplaceholder.typicode.com/todos/1')
-          // fetch('https://' + ip + ':8080/sendPush', {
-          //   method: 'POST',
-          //   headers: {
-          //     'Accept': 'application/json',
-          //     'Content-Type': 'application/json'
-          //   },
-          //   body: null
-          // })
-          .then(response => response.json())
-          .then(json => console.log(json))
-          .then(() => console.log('no network error'))
-          .catch((error) => console.error(error));
-          console.log('next part');
+          geocollection.doc(userId).get().then((doc) => {
+            // when adding parameters just use a slash to denote separations between each parameter
+            fetch('http://' + ip + ':8080/sendPush/' + firebase.auth().currentUser?.uid + '/1')
+            // console.log('http://' + ip + ':8080/');
+            // fetch('http://' + ip + ':8080/')
+            // fetch('https://jsonplaceholder.typicode.com/todos/1')
+            // fetch('https://' + ip + ':8080/sendPush', {
+            //   method: 'POST',
+            //   headers: {
+            //     'Accept': 'application/json',
+            //     'Content-Type': 'application/json'
+            //   },
+            //   body: null
+            // })
+            .then(response => response.json())
+            .then(json => console.log(json))
+            .then(() => console.log('no network error'))
+            .catch((error) => console.error(error));
+            console.log('next part');
+          }
+          ).catch((error) => {
+            console.log("Error getting document:", error);
+          });
+          
         }}
       />
     </View>
