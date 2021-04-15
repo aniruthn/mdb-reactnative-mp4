@@ -12,6 +12,7 @@ import { RootStackParamList } from "../types";
 import MainStackNavigator from "./RootStack/MainStack";
 import AuthStackScreen from "./AuthStack/AuthStackScreen";
 import LinkingConfiguration from "../navigation/LinkingConfiguration";
+import { LocationManager } from "./LocationManager";
 import {Expo} from 'expo-server-sdk';
 // If you are not familiar with React Navigation, we recommend going through the
 // "Fundamentals" guide: https://reactnavigation.org/docs/getting-started
@@ -72,9 +73,11 @@ const Stack = createStackNavigator<RootStackParamList>();
 function RootNavigator() {
   return (
     // change the outer stack to be the auth stack for user login
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Root" component={MainStackNavigator} />
-    </Stack.Navigator>
+    <LocationManager>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Root" component={MainStackNavigator} />
+      </Stack.Navigator>
+    </LocationManager>
   );
 }
 

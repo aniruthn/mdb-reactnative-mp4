@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Platform } from "react-native";
 import * as Notifications from "expo-notifications";
+import * as geofirestore from 'geofirestore';
 import Constants from "expo-constants";
 import { MainStyles } from "./MainScreenStyles";
 import { Text, View } from "../../../components/Themed";
@@ -54,8 +55,8 @@ export default function MainScreen() {
         onPress={async () => {
           // the first part is the personal ip address, gets replaced by whatever
           // the index.js prints ot as the local ip address instead
-          const ip: string = '192.168.254.19';
-          
+          const ip: string = '10.0.0.188';
+
           // when adding parameters just use a slash to denote separations between each parameter
           fetch('http://' + ip + ':8080/sendPush/' + firebase.auth().currentUser?.uid + '/0/1')
           // console.log('http://' + ip + ':8080/');

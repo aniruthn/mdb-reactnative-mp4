@@ -78,9 +78,8 @@ exports.postNotification = (req, response) => {
   // else (firebase stuff) I managed to get work along with a few of the other errors
   console.log('reached');
   //query the database to find the user who is closest to the user with the current uid
-  const to_uid;
   // this uid passed into doc represents the person receiving the notification
-  var docRef = db.collection("users").doc(to_uid);
+  var docRef = db.collection("users").doc(uid);
   docRef.get().then((doc) => {
     const token = doc.data().notificationToken;
     //token is right!!!!

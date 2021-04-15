@@ -34,7 +34,8 @@ export default function SignUpScreen({ navigation }: Props) {
       settings: {
         locationTrackingOn: true,
         pushNotificationsOn: true,
-      }
+      },
+      protectedRegions: []
     };
     return await firebase
       .firestore()
