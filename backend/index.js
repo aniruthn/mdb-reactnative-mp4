@@ -69,7 +69,7 @@ app.get('/', (req, resp) => {
 
 //should be changed to post lmao
 // each query parameter is separated with a /:
- app.get('/sendPush/:uid/:location1/:location2', (req, resp) => {
+ app.get('/sendPush/:uid/:targetlocation', (req, resp) => {
    console.log('initial reach');
    postNotification(req, resp)
   });
