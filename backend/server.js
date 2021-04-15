@@ -67,10 +67,8 @@ console.log('made it');
 exports.postNotification = (req, response) => {
   const uid = req.params.uid;
   console.log(uid);
-  const location1 = req.params.location1;
-  const location2 = req.params.location2;
-  console.log(location1);
-  console.log(location2);
+  const targetLocation = req.params.targetLocation;
+  console.log(targetLocation);
 
   // PLEASE READ: This is what I think is going wrong below
   // The line where it's sending push notifications async is erroring, maybe because of type or something else
@@ -79,58 +77,73 @@ exports.postNotification = (req, response) => {
   console.log('reached');
   //query the database to find the user who is closest to the user with the current uid
   // this uid passed into doc represents the person receiving the notification
-  var docRef = db.collection("users").doc(uid);
-  docRef.get().then((doc) => {
-    const token = doc.data().notificationToken;
-    //token is right!!!!
-    console.log(token);
-
-  let somePushTokens = [token];
-
-  let messages = [];
-  for (let pushToken of somePushTokens) {
-  // Each push token looks like ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
-
-  // Check that all your push tokens appear to be valid Expo push tokens
-    if (!Expo.isExpoPushToken(pushToken)) {
-      console.error(`Push token ${pushToken} is not a valid Expo push token`);
-      continue;
-    }
-
-  // Construct a message (see https://docs.expo.io/push-notifications/sending-notifications/)
-    messages.push({
-      to: pushToken,
-      sound: 'default',
-      body: 'This is a test notification',
-      data: { withSome: 'data' },
-    })
-  }
-
-  // The Expo push notification service accepts batches of notifications so
-  // that you don't need to send 1000 requests to send 1000 notifications. We
-  // recommend you batch your notifications to reduce the number of requests
-  // and to compress them (notifications with similar content will get
-  // compressed).
-  let chunks = expo.chunkPushNotifications(messages);
-  let tickets = [];
-  (async () => {
-    // Send the chunks to the Expo push notification service. There are
-    // different strategies you could use. A simple one is to send one chunk at a
-    // time, which nicely spreads the load out over time:
-    for (let chunk of chunks) {
-      try {
-        let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-        console.log(ticketChunk);
-        tickets.push(...ticketChunk);
-        // NOTE: If a ticket contains an error code in ticket.details.error, you
-        // must handle it appropriately. The error codes are listed in the Expo
-        // documentation:
-        // https://docs.expo.io/push-notifications/sending-notifications/#individual-errors
-      } catch (error) {
-        console.error(error);
+  // Create a GeoQuery based on a location
+  db.collection("location").doc(uid).get().then((doc) => {
+    const data = doc.data();
+    const query = geocollection.near({ center: data.coordinates, radius: 100 });
+    // Get query (as Promise)
+    query.get().then((value) => {
+      // All GeoDocument returned by GeoQuery, like the GeoDocument added above
+      const ref = value.doc;
+      ref.get().then((doc) => {
+      const docRef = db.collection("users").doc(doc.id);
+      docRef.get().then((doc) => {
+        const token = doc.data().notificationToken;
+        //token is right!!!!
+        console.log(token);
+    
+      let somePushTokens = [token];
+    
+      let messages = [];
+      for (let pushToken of somePushTokens) {
+      // Each push token looks like ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+    
+      // Check that all your push tokens appear to be valid Expo push tokens
+        if (!Expo.isExpoPushToken(pushToken)) {
+          console.error(`Push token ${pushToken} is not a valid Expo push token`);
+          continue;
+        }
+    
+      // Construct a message (see https://docs.expo.io/push-notifications/sending-notifications/)
+        messages.push({
+          to: pushToken,
+          sound: 'default',
+          body: 'This is a test notification',
+          data: { withSome: 'data' },
+        })
       }
-    }
-  })();
+    
+      // The Expo push notification service accepts batches of notifications so
+      // that you don't need to send 1000 requests to send 1000 notifications. We
+      // recommend you batch your notifications to reduce the number of requests
+      // and to compress them (notifications with similar content will get
+      // compressed).
+      let chunks = expo.chunkPushNotifications(messages);
+      let tickets = [];
+      (async () => {
+        // Send the chunks to the Expo push notification service. There are
+        // different strategies you could use. A simple one is to send one chunk at a
+        // time, which nicely spreads the load out over time:
+        for (let chunk of chunks) {
+          try {
+            let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+            console.log(ticketChunk);
+            tickets.push(...ticketChunk);
+            // NOTE: If a ticket contains an error code in ticket.details.error, you
+            // must handle it appropriately. The error codes are listed in the Expo
+            // documentation:
+            // https://docs.expo.io/push-notifications/sending-notifications/#individual-errors
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      })();
+    });
+    });
+  }).catch((error) => {
+    console.error(error);
+  });
+
 })};
 
 // exports.postNotification = (req: { params: { uid: any; location1: any; location2: any;}; body: { title: any; message: any; }; }, res: { json: (arg0: any) => void }) => {

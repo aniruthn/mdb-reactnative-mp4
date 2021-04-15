@@ -29,7 +29,6 @@ const express = require("express");
 //  import { postNotification } from './server.js';
  const serv = require('./server.js');
  const postNotification = serv.postNotification;
- 
  /**
   * Create Express server.
   */

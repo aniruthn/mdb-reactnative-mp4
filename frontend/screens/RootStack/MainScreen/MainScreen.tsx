@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Platform } from "react-native";
+import { Button, Dimensions, Platform } from "react-native";
 import * as Notifications from "expo-notifications";
 import * as geofirestore from 'geofirestore';
 import Constants from "expo-constants";
@@ -7,6 +7,8 @@ import { MainStyles } from "./MainScreenStyles";
 import { Text, View } from "../../../components/Themed";
 import { Expo, ExpoPushMessage } from "expo-server-sdk";
 import firebase from "firebase";
+import MapView from 'react-native-maps';
+import { TextInput } from "react-native-paper";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -50,6 +52,8 @@ export default function MainScreen() {
         lightColor="#eee"
         darkColor="rgba(255,255,255,0.1)"
       />
+      
+
       <Button
         title="Press to schedule a notification"
         onPress={async () => {
@@ -57,6 +61,7 @@ export default function MainScreen() {
           // the index.js prints ot as the local ip address instead
           const ip: string = '10.0.0.188';
           
+  
           const firestore = firebase.firestore();
           const GeoFirestore = geofirestore.initializeApp(firestore as any);
           const geocollection = GeoFirestore.collection("locations");

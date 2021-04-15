@@ -8,6 +8,7 @@
     "geofirestore": "^4.4.1",
     "react": "^17.0.2",
     "react-native": "^0.64.0",
+    "react-native-maps": "0.27.1",
     "react-native-paper": "^4.7.2"
   },
   "devDependencies": {

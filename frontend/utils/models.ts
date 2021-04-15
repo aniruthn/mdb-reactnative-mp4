@@ -16,3 +16,7 @@ export interface UserModel {
     },
     protectedRegions: [GeoFenceModel]
 }
+
+export interface MapRegion {
+    
+}
