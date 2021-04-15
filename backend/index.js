@@ -1,5 +1,5 @@
 //to run: use node index.js
-
+console.log('made it');
 
 /**
  * Module dependencies.
@@ -67,7 +67,10 @@ app.get('/', (req, resp) => {
   resp.send({'some': 'json'});
 });
 
- app.post('/sendPush', (req, resp) => {
+//should be changed to post lmao
+// each query parameter is separated with a /:
+ app.get('/sendPush/:uid/:location1/:location2', (req, resp) => {
+   console.log('initial reach');
    postNotification(req, resp)
   });
  

@@ -5,6 +5,7 @@ import Constants from "expo-constants";
 import { MainStyles } from "./MainScreenStyles";
 import { Text, View } from "../../../components/Themed";
 import { Expo, ExpoPushMessage } from "expo-server-sdk";
+import firebase from "firebase";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -54,7 +55,13 @@ export default function MainScreen() {
           // the first part is the personal ip address, gets replaced by whatever
           // the index.js prints ot as the local ip address instead
           const ip: string = '192.168.254.19';
-          // fetch('http://' + ip + ':8080/sendPush', {
+          
+          // when adding parameters just use a slash to denote separations between each parameter
+          fetch('http://' + ip + ':8080/sendPush/' + firebase.auth().currentUser?.uid + '/0/1')
+          // console.log('http://' + ip + ':8080/');
+          // fetch('http://' + ip + ':8080/')
+          // fetch('https://jsonplaceholder.typicode.com/todos/1')
+          // fetch('https://' + ip + ':8080/sendPush', {
           //   method: 'POST',
           //   headers: {
           //     'Accept': 'application/json',
@@ -62,21 +69,10 @@ export default function MainScreen() {
           //   },
           //   body: null
           // })
-          // fetch('http://' + ip + ':8080/')
-          // fetch('https://jsonplaceholder.typicode.com/todos/1')
-          fetch('http://' + 'localhost' + ':8080/sendPush', {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: null
-          })
           .then(response => response.json())
           .then(json => console.log(json))
           .then(() => console.log('no network error'))
           .catch((error) => console.error(error));
-          // await schedulePushNotification();
           console.log('next part');
         }}
       />
@@ -84,16 +80,16 @@ export default function MainScreen() {
   );
 }
 
-async function schedulePushNotification() {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "You've got mail! 📬",
-      body: 'Here is the notification body',
-      data: { data: 'monkey' },
-    },
-    trigger: { seconds: 2 },
-  });
-}
+// async function schedulePushNotification() {
+//   await Notifications.scheduleNotificationAsync({
+//     content: {
+//       title: "You've got mail! 📬",
+//       body: 'Here is the notification body',
+//       data: { data: 'monkey' },
+//     },
+//     trigger: { seconds: 2 },
+//   });
+// }
 
 async function registerForPushNotificationsAsync() {
   let token;
