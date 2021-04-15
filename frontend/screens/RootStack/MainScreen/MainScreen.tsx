@@ -56,7 +56,14 @@ export default function MainScreen() {
           // the first part is the personal ip address, gets replaced by whatever
           // the index.js prints ot as the local ip address instead
           const ip: string = '10.0.0.188';
-
+          
+          const firestore = firebase.firestore();
+          const GeoFirestore = geofirestore.initializeApp(firestore as any);
+          const geocollection = GeoFirestore.collection("locations");
+          const userId = firebase.auth().currentUser?.uid;
+          geocollection.doc(userId).set({
+            requested: true,
+          }, {merge: true});
           // when adding parameters just use a slash to denote separations between each parameter
           fetch('http://' + ip + ':8080/sendPush/' + firebase.auth().currentUser?.uid + '/0/1')
           // console.log('http://' + ip + ':8080/');

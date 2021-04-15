@@ -14,6 +14,7 @@ export async function setUserLocation(
       coordinates: coordinates,
       lastUpdated: Date.now(),
       userId: userId,
+      requested: false,
     });
   }
   
