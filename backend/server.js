@@ -5,6 +5,8 @@ const expoServer = require('expo-server-sdk');
 const Expo = expoServer.Expo;
 const firebase = require('firebase');
 
+const geofirestore = require('geofirestore');
+
 const firebaseConfig = require("../keys.json");
 
 // const firebaseConfig = {
@@ -24,6 +26,16 @@ if (firebase.apps.length == 0) {
 }
 
 const db = firebase.firestore();
+
+const GeoFirestore = geofirestore.initializeApp(db);
+const geocollection = GeoFirestore.collection('locations');
+
+// geocollection.add({
+//   name: 'Geofirestore',
+//   score: 100,
+//   // The coordinates field must be a GeoPoint!
+//   coordinates: new firebase.firestore.GeoPoint(40.7589, -73.9851)
+// })
 
 
 // Create a new Expo SDK client
@@ -78,17 +90,31 @@ exports.postNotification = (req, response) => {
   //query the database to find the user who is closest to the user with the current uid
   // this uid passed into doc represents the person receiving the notification
   // Create a GeoQuery based on a location
-  db.collection("location").doc(uid).get().then((doc) => {
+  db.collection("locations").doc(uid).get().then((doc) => {
     const data = doc.data();
     const query = geocollection.near({ center: data.coordinates, radius: 100 });
+    //query will always be defined since it'll query the own user too
+
     // Get query (as Promise)
     query.get().then((value) => {
       // All GeoDocument returned by GeoQuery, like the GeoDocument added above
-      const ref = value.doc;
-      ref.get().then((doc) => {
-      const docRef = db.collection("users").doc(doc.id);
+
+      //logic will need to be implemented here to make sure it's not the same user
+      const ref = value.docs[0]; //arbitrarily pick the first user
+
+      // if the only value for ref is just the initial user that means the request is brand new
+      // and needs to be built now
+
+
+      console.log(ref); //references the uid of which user is token for confirmation
+      // ref.data.then((doc) => {
+      let otherId = ref.id;
+      console.log(otherId);
+      const docRef = db.collection("users").doc(otherId);
       docRef.get().then((doc) => {
+        console.log(doc.data());
         const token = doc.data().notificationToken;
+        const otherName = doc.data().name;
         //token is right!!!!
         console.log(token);
     
@@ -103,12 +129,12 @@ exports.postNotification = (req, response) => {
           console.error(`Push token ${pushToken} is not a valid Expo push token`);
           continue;
         }
-    
+
       // Construct a message (see https://docs.expo.io/push-notifications/sending-notifications/)
         messages.push({
           to: pushToken,
           sound: 'default',
-          body: 'This is a test notification',
+          body: `${otherName} is your match!`,
           data: { withSome: 'data' },
         })
       }
@@ -139,7 +165,7 @@ exports.postNotification = (req, response) => {
         }
       })();
     });
-    });
+    // });
   }).catch((error) => {
     console.error(error);
   });

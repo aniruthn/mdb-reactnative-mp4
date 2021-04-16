@@ -44,6 +44,7 @@ export default function MainScreen() {
       // Notifications.removeNotificationSubscription(responseListener);
     };
   }, []);
+
   return (
     <View style={MainStyles.container}>
       <Text style={MainStyles.title}>Main Screen</Text>
@@ -53,13 +54,15 @@ export default function MainScreen() {
         darkColor="rgba(255,255,255,0.1)"
       />
       
+      {/* the map view works but only on mobile, breaks on web view */}
+      {/* <MapView style={MainStyles.map} /> */}
 
       <Button
         title="Press to schedule a notification"
         onPress={async () => {
           // the first part is the personal ip address, gets replaced by whatever
           // the index.js prints ot as the local ip address instead
-          const ip: string = '10.0.0.188';
+          const ip: string = '192.168.254.19';
           
   
           const firestore = firebase.firestore();
@@ -67,6 +70,7 @@ export default function MainScreen() {
           const geocollection = GeoFirestore.collection("locations");
           const userId = firebase.auth().currentUser?.uid;
           geocollection.doc(userId).set({
+            coordinates: new firebase.firestore.GeoPoint(40.7589, -73.9851),
             requested: true,
           }, {merge: true});
           geocollection.doc(userId).get().then((doc) => {

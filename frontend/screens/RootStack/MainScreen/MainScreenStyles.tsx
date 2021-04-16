@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { Dimensions } from "react-native";
 
 export const MainStyles = StyleSheet.create({
   container: {
@@ -14,5 +15,9 @@ export const MainStyles = StyleSheet.create({
     marginVertical: 30,
     height: 1,
     width: "80%",
+  },
+  map: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height / 2,
   },
 });
