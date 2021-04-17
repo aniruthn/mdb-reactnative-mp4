@@ -16,10 +16,13 @@ export default function AccountScreen() {
         lightColor="#eee"
         darkColor="rgba(255,255,255,0.1)"
       />
+      <Text>{firebase.auth().currentUser?.uid}</Text>
       <TouchableOpacity
         onPress={() => firebase.auth().signOut()}
       >
-        <Button>Sign Out</Button>
+        <Button
+          onPress={() => firebase.auth().signOut()}
+        >Sign Out</Button>
       </TouchableOpacity>
     </View>
   );
