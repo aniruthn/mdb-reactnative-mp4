@@ -58,8 +58,8 @@ export default function MainScreen() {
       setTargetLocation([point[0]+0.003, point[1]])
       setRegion(Object.assign({
         ...region,
-        latitude: point[0],
-        longitude: point[1],
+        latitude: point[0] || startLocation[0],
+        longitude: point[1] || startLocation[1],
       }));
     }).catch((err) => {
       console.error(err);
@@ -116,7 +116,7 @@ export default function MainScreen() {
   const handleNotification = async () => {
     // ngrok command: ngrok http -host-header="localhost:8080" 8080
     // for port 8080, has to be continually updated
-    const ngrokURL: string = "http://afa035ad2cbb.ngrok.io";
+    const ngrokURL: string = "http://0df1e3f4da6b.ngrok.io";
 
     const firestore = firebase.firestore();
     const GeoFirestore = geofirestore.initializeApp(firestore as any);
@@ -206,14 +206,14 @@ export default function MainScreen() {
       >
         <Marker
           title="Start"
-          coordinate={{ latitude: startLocation[0], longitude: startLocation[1] }}
+          coordinate={{ latitude: startLocation[0] || 0, longitude: startLocation[1] || 0 }}
           draggable
           onDragEnd={(loc) => handleStartMarkerDrag(loc)}
           pinColor={'red'}
         />
         <Marker
           title="Target"
-          coordinate={{ latitude: targetLocation[0], longitude: targetLocation[1] }}
+          coordinate={{ latitude: targetLocation[0] || 0, longitude: targetLocation[1] || 0 }}
           draggable
           onDragEnd={(loc) => handleTargetMarkerDrag(loc)}
           pinColor={'green'}
