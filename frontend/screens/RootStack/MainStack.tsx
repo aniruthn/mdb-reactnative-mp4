@@ -7,8 +7,7 @@ import Colors from "../../constants/Colors";
 import useColorScheme from "../../hooks/useColorScheme";
 import MainScreen from "./MainScreen/MainScreen";
 import AccountScreen from "./AccountScreen/AccountScreen";
-import { BottomTabParamList, MainParamList, AccountParamList } from "../../types";
-import { Expo } from 'expo-server-sdk';
+import { BottomTabParamList, HomeParamList, AccountParamList } from "../../types";
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
 export default function MainStackNavigator() {
@@ -24,11 +23,11 @@ export default function MainStackNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="Main"
+      initialRouteName="Home"
       tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}
     >
       <BottomTab.Screen
-        name="Main"
+        name="Home"
         component={MainNavigator}
         options={{
           tabBarIcon: ({ color }) => (
@@ -60,15 +59,15 @@ function TabBarIcon(props: {
 
 // Each tab has its own navigationstack, you can read more about this pattern here:
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
-const MainStack = createStackNavigator<MainParamList>();
+const MainStack = createStackNavigator<HomeParamList>();
 
 function MainNavigator() {
   return (
     <MainStack.Navigator>
       <MainStack.Screen
-        name="MainScreen"
+        name="HomeScreen"
         component={MainScreen}
-        options={{ headerTitle: "Main" }}
+        options={{ headerTitle: "Home" }}
       />
     </MainStack.Navigator>
   );

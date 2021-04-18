@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Dimensions, Platform } from "react-native";
+import { Platform } from "react-native";
+import { Button , Text} from "react-native-paper";
 import * as Notifications from "expo-notifications";
 import * as geofirestore from "geofirestore";
+import * as Location from 'expo-location';
 import Constants from "expo-constants";
 import { MainStyles } from "./MainScreenStyles";
-import { Text, View } from "../../../components/Themed";
-import { Expo, ExpoPushMessage } from "expo-server-sdk";
+import { View } from "../../../components/Themed";
 import firebase from "firebase";
-import MapView from "react-native-maps";
-import { TextInput } from "react-native-paper";
+import Colors from "../../../constants/Colors";
+import useColorScheme from "../../../hooks/useColorScheme";
+import MapView, { Marker, MapEvent, LatLng, Region } from "react-native-maps";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -18,15 +20,64 @@ Notifications.setNotificationHandler({
 });
 
 export default function MainScreen() {
+  const colorScheme = useColorScheme();
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const [startLocation, setStartLocation] = useState([40.7588, -73.9852]);
   const [targetLocation, setTargetLocation] = useState([40.7589, -73.9851]);
+  const [region, setRegion] = useState<Region>({
+    latitude: 40.758797200007905,
+    latitudeDelta: 0.03,
+    longitude: -73.98520002141595,
+    longitudeDelta: 0.03,
+  });
   // const [startLocation, setStartLocation] = useState([44.7588, -79.9852]);
   // const [targetLocation, setTargetLocation] = useState([45.7589, -78.9851]);
   //both of these are unused now that the return section is commented out but still seems to work?
   const notificationListener = useRef();
   const responseListener = useRef();
+
+  // useEffect(() => {
+  //   Location.watchPositionAsync(
+  //     {
+  //       accuracy: Location.Accuracy.High,
+  //       timeInterval: 60000,
+  //     },
+  //     (newLocation) => {
+  //       const point: LatLng = newLocation.coords;
+  //       setStartLocation([point.latitude, point.longitude]);
+  //       setTargetLocation([point.latitude+0.003, point.longitude]);
+  //     }
+  // )});
+
+  useEffect(() => {
+    //need a different way to get and update to the current location
+    firebase.firestore().collection("startLocations").doc(firebase.auth().currentUser?.uid).get().then((doc) => {
+      const point: number[] = [Number(doc?.data()?.coordinates.latitude), Number(doc?.data()?.coordinates.longitude)];
+      setStartLocation(point);
+      setTargetLocation([point[0]+0.003, point[1]])
+      setRegion(Object.assign({
+        ...region,
+        latitude: point[0],
+        longitude: point[1],
+      }));
+    }).catch((err) => {
+      console.error(err);
+    });
+    // (async () => {
+    //   let location = await Location.getCurrentPositionAsync({});
+    //   console.log("location" + location);
+    //   const point: LatLng = location.coords;
+    //   setStartLocation([point.latitude, point.longitude]);
+    //   setTargetLocation([point.latitude+0.003, point.longitude]);
+    //   setRegion({
+    //     latitude: point.latitude,
+    //     longitude: point.longitude,
+    //     latitudeDelta: 2,
+    //     longitudeDelta: 2,
+    //   });
+    // });
+  }, []);
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
@@ -52,10 +103,20 @@ export default function MainScreen() {
     };
   }, []);
 
+  const handleStartMarkerDrag = (loc: MapEvent<{}>) => {
+    const point: LatLng = loc.nativeEvent.coordinate;
+    setStartLocation([point.latitude, point.longitude])
+  }
+
+  const handleTargetMarkerDrag = (loc: MapEvent<{}>) => {
+    const point: LatLng = loc.nativeEvent.coordinate;
+    setTargetLocation([point.latitude, point.longitude])
+  }
+
   const handleNotification = async () => {
     // ngrok command: ngrok http -host-header="localhost:8080" 8080
     // for port 8080, has to be continually updated
-    const ngrokURL: string = "http://4ec17fe26035.ngrok.io";
+    const ngrokURL: string = "http://afa035ad2cbb.ngrok.io";
 
     const firestore = firebase.firestore();
     const GeoFirestore = geofirestore.initializeApp(firestore as any);
@@ -136,17 +197,38 @@ export default function MainScreen() {
 
   return (
     <View style={MainStyles.container}>
-      <Text style={MainStyles.title}>Main Screen</Text>
-      <View
-        style={MainStyles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
-      <MapView style={MainStyles.map} />
+      <MapView
+        style={MainStyles.map}
+        region={region}
+        onRegionChangeComplete={setRegion}
+        showsUserLocation
+        followsUserLocation
+      >
+        <Marker
+          title="Start"
+          coordinate={{ latitude: startLocation[0], longitude: startLocation[1] }}
+          draggable
+          onDragEnd={(loc) => handleStartMarkerDrag(loc)}
+          pinColor={'red'}
+        />
+        <Marker
+          title="Target"
+          coordinate={{ latitude: targetLocation[0], longitude: targetLocation[1] }}
+          draggable
+          onDragEnd={(loc) => handleTargetMarkerDrag(loc)}
+          pinColor={'green'}
+        />
+      </MapView>
+      <Text style={MainStyles.title}>Select Path</Text>
       <Button
-        title="Press to schedule a notification"
         onPress={handleNotification}
-      />
+        color={Colors[colorScheme].tint}
+        mode='contained'
+        dark
+        style={MainStyles.button}
+      >
+        Press to schedule a notification
+      </Button>
     </View>
   );
 }

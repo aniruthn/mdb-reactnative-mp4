@@ -1,10 +1,8 @@
 {
   "expoServerNgrokUrl": "https://nh-v7s.aniruth.frontend.exp.direct",
   "packagerNgrokUrl": "https://packager.nh-v7s.aniruth.frontend.exp.direct",
-  "ngrokPid": 17140,
-  "devToolsPort": 19002,
+  "ngrokPid": 17452,
   "expoServerPort": 19000,
-  "packagerPort": 19000,
-  "packagerPid": null,
-  "webpackServerPort": 19006
+  "devToolsPort": 19002,
+  "packagerPort": 19000
 }

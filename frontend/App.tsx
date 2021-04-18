@@ -8,25 +8,27 @@ import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./screens/index";
 
+import Colors from "./constants/Colors";
+
 const firebaseConfig = require("./keys.json");
 
 if (firebase.apps.length == 0) {
   firebase.initializeApp(firebaseConfig);
 }
 
-const theme = {
-  ...DefaultTheme,
-  roundness: 2,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: '#E91D63',
-    accent: '#FFB9D1',
-  },
-};
-
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
+
+  const theme = {
+    ...DefaultTheme,
+    roundness: 2,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: Colors[colorScheme].tint,
+      accent: '#FFB9D1',
+    },
+  };
 
   if (!isLoadingComplete) {
     return null;
